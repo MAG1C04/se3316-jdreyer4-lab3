@@ -5,7 +5,7 @@
         <title>
             Superhero Information
         </title>
-        <link href="stylesheet.css" type="text/css" res="stylesheet">
+        <link href="client/stylesheet.css" type="text/css" res="stylesheet">
     </head>
     <body>
         <div class="heading">
@@ -18,13 +18,15 @@
             <button id="searchPublisher" class="button">Search Publisher</button>
             <button id="searchPower" class="button">Search Power</button>
         </div>
-        <div class="results">
+        <div class="resultActions">
             <a>Results:</a>
             <button id="sortByName" class="button">Sort By Name</button>
             <button id="sortByRace" class="button">Sort By Race</button>
             <button id="sortByPublisher" class="button">Sort By Publisher</button>
             <button id="sortByPower" class="button">Sort By Power</button>
         </div>
+        <ul id="results">
+        </ul>
         <script defer src='script.js'></script>
     </body>
 </html>
