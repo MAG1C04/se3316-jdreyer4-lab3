@@ -418,7 +418,6 @@ function generateResults(data){
 
         let resultPowers = document.createElement("ul");
         resultPowers.className = "power";
-        //resultPower.textContent = hero.Powers;
         for(let power in hero.Powers){
             if(hero.Powers[power] == "True"){
                 singlePower = document.createElement("li");

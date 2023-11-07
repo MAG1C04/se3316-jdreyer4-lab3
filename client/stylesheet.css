@@ -1,7 +1,9 @@
-.results.searchResult {
-    float: left;
+.searchResult {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Proportions of the columns */
+    gap: 20px;
     width: 23.5%;
-    height: 1200px;
+    
     box-sizing: border-box;
     background-color: darkgray;
     padding: 10px;
@@ -9,4 +11,8 @@
     border-style: solid;
     border: 5px;
     border-color: midnightblue;
+}
+
+.heading {
+    font-size: xx-large;
 }
