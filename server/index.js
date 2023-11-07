@@ -266,7 +266,7 @@ function getHeroByID(id){
 }
 
 function inputSanitization(input){
-	if(/^[\u00BF-\u1FFF\u2C00-\uD7FF\w]+$/.test(input)){
+	if(/^[\u00BF-\u1FFF\u2C00-\uD7FF\w]{0,10}$/.test(input)){
 		console.log("pass test")
 		return true;
 	} else {
