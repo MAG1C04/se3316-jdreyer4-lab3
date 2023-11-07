@@ -165,6 +165,7 @@ function search_list(){
                 checkBox.type = "checkbox";
                 checkBox.value = 1;
                 checkBox.name = "Select []"
+                checkBox.className = "checkBox"
 
                 let resultName = document.createElement("li");
                 resultName.className = "name";
@@ -222,10 +223,21 @@ function search_list(){
                 resultWeight.textContent = hero.Weight;
                 attributes.appendChild(resultWeight);
 
-                let resultPower = document.createElement("li");
-                resultPower.className = "power";
-                resultPower.textContent = hero.Powers;
-                attributes.appendChild(resultPower);
+                let resultCategory = document.createElement("li");
+                resultCategory.className = "powerCategory";
+                resultCategory.textContent = "Powers: ";
+                attributes.appendChild(resultCategory);
+
+                let resultPowers = document.createElement("ul");
+                resultPowers.className = "power";
+                for(let power in hero.Powers){
+                    if(hero.Powers[power] == "True"){
+                        singlePower = document.createElement("li");
+                        singlePower.textContent = power;
+                        resultPowers.appendChild(singlePower);
+                    }
+                }
+                attributes.appendChild(resultPowers);
             
                 result.appendChild(checkBox)
                 result.lastChild.addEventListener('click', addSelected)
@@ -415,6 +427,11 @@ function generateResults(data){
         resultWeight.className = "weight";
         resultWeight.textContent = hero.Weight;
         attributes.appendChild(resultWeight);
+
+        let resultCategory = document.createElement("li");
+        resultCategory.className = "powerCategory";
+        resultCategory.textContent = "Powers: ";
+        attributes.appendChild(resultCategory);
 
         let resultPowers = document.createElement("ul");
         resultPowers.className = "power";

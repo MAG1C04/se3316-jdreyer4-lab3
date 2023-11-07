@@ -1,9 +1,5 @@
 .searchResult {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr; /* Proportions of the columns */
-    gap: 20px;
-    width: 23.5%;
-    
+    width: 100%;
     box-sizing: border-box;
     background-color: darkgray;
     padding: 10px;
@@ -11,6 +7,11 @@
     border-style: solid;
     border: 5px;
     border-color: midnightblue;
+}
+
+.searchResult.checkBox {
+    height: 20px;
+    width: 20px;
 }
 
 .heading {
