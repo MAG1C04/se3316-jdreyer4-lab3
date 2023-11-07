@@ -2,44 +2,6 @@ const express = require('express');
 const app = express();
 var fs = require('fs');
 
-/*const getSuperheroInfo = async () => {
-	try{
-		const resp = await fetch("superhero_info.json")
-		if(resp.ok){
-			const superheroInfoJSON = await response.json()
-			return superheroInfoJSON
-		} else {
-			console.error('Super Hero Info JSON File not Retrieved')
-		}
-	} catch(error){
-		console.log("Error: " + error)
-	}
-};
-
-getSuperheroInfo()
-.then(data => {
-	console.log(data)
-})*/
-
-/*fetch('/superhero_info.json')
-.then((response) => response.json())
-.then((json) => {
-	console.log(json)
-	superheroInfo = json
-})*/
-
-/*function fetchSuperheroInfo() { 
-    fetch("superhero_info.json") 
-        .then((res) => { 
-        return res.json(); 
-    }) 
-    .then((data) => {
-		console.log(data)
-	}); 
-}
-
-fetchSuperheroInfo()*/
-
 const superheroInfo = require('./superhero_info.json'); 
 const superheroPowers = require('./superhero_powers.json');
 let lists = require('./lists.json');
@@ -50,50 +12,81 @@ app.use('/', express.static('../client'))
 
 const router = express.Router();
 
+let numOfResults = -1;
+
 router.route('/getSuperheroByName/:name')
 	.get((req, res) => {
-		console.log("Response Sent")
-		result = getHeroByName(req.params.name)
+		if(!inputSanitization(req.params.name)){
+			res.status(400).send(JSON.stringify("Input must contain only letters, dashes, periods, and numbers"))
+		} else {
+			console.log("Response Sent")
+			result = getHeroByName(req.params.name)
 
-		res.send(result)
+			res.send(result)
+		}
 	})
 
 router.route('/getSuperheroByRace/:race')
 	.get((req, res) => {
-		console.log("Response Sent")
-		result = getHeroByRace(req.params.race)
+		if(!inputSanitization(req.params.race)){
+			res.status(400).send(JSON.stringify("Input must contain only letters, dashes, periods, and numbers"))
+		} else {
+			console.log("Response Sent")
+			result = getHeroByRace(req.params.race)
 
-		res.send(result)
+			res.send(result)
+		}
 	})
 
 router.route('/getSuperheroByPublisher/:publisher')
 	.get((req, res) => {
-		console.log("Response Sent")
-		result = getHeroByPublisher(req.params.publisher)
+		if(!inputSanitization(req.params.publisher)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		} else {
+			console.log("Response Sent")
+			result = getHeroByPublisher(req.params.publisher)
 
-		res.send(result)
+			res.send(result)
+		}
 	})
 
 router.route('/getSuperheroByPower/:power')
 	.get((req, res) => {
-		console.log("Response Sent")
-		result = getHeroByPower(req.params.power)
+		if(!inputSanitization(req.params.power)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		} else {
+			console.log("Response Sent")
+			result = getHeroByPower(req.params.power)
 
-		res.send(result)
+			res.send(result)
+		}
 	})
 
 router.route('/getSuperheroByID/:id')
 	.get((req, res) => {
-		console.log("Response Sent")
-		result = getHeroByID(req.params.id)
+		if(!inputSanitization(req.params.id)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		} else {
+			console.log("Response Sent")
+			result = getHeroByID(req.params.id)
 
-		res.send(result)
+			res.send(result)
+		}
+	})
+router.route('/numOfResults/:quantity')
+	.post((req, res) => {
+		if(inputSanitization(req.params.quantity) && req.params.quantity > 0){
+			numOfResults = req.params.quantity;
+		}
 	})
 
 router.route('/list/:listName')
 	.get((req, res) => {
 		let list = lists[req.params.listName];
-		if(list){
+		if(!inputSanitization(req.params.listName)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		}
+		else if(list){
 			res.send(JSON.stringify(list));
 		} else {
 			res.status(404).send("List Not Found");
@@ -101,8 +94,10 @@ router.route('/list/:listName')
 	})
 	.put((req, res) => {
 		let listName = req.params.listName;
-		if (lists[listName]){
-			res.status(400).send("List Already Exists")
+		if(!inputSanitization(listName)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		}else if (lists[listName]){
+			res.status(300).send("List Already Exists")
 		} else {
 			const newList = req.body;
 			fs.readFile('lists.json', 'utf8', function readFileCallback(err, data){
@@ -118,7 +113,10 @@ router.route('/list/:listName')
 	})
 	.post((req, res) => {
 		let listName = req.params.listName;
-		if (lists[listName]){
+		if(!inputSanitization(listName)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		}
+		else if (lists[listName]){
 			const newList = req.body;
 			fs.readFile('lists.json', 'utf8', function readFileCallback(err, data){
 				if (err){
@@ -135,7 +133,10 @@ router.route('/list/:listName')
 	})
 	.delete((req, res) => {
 		let listName = req.params.listName;
-		if (lists[listName]){
+		if(!inputSanitization(listName)){
+			res.status(400).send("Input must contain only letters, dashes, periods, and numbers")
+		}
+		else if (lists[listName]){
 			fs.readFile('lists.json', 'utf8', function readFileCallback(err, data){
 				if (err){
 					console.log(err);
@@ -148,6 +149,23 @@ router.route('/list/:listName')
 		} else {
 			res.status(404).send("List Not Found")
 		}
+	})
+
+router.route('/publishers')
+	.get((req, res) => {
+		let results = []
+		for(let hero in superheroInfo){
+			let heroPublisher = superheroInfo[hero].Publisher
+			if(!results.includes(heroPublisher) && heroPublisher){
+				results.push(heroPublisher)
+			}
+		}
+
+		let obj = {
+			"list": results
+		}
+
+		res.send(JSON.stringify(obj))
 	})
 
 app.use('/api', router)
@@ -165,6 +183,9 @@ function getHeroByName(name){
 				}
 			}
 			results.push(JSON.stringify(superheroInfo[i]));
+			if(numOfResults > 0 && results.length >= numOfResults){
+				break;
+			}
 		}
 	}
 	return results;
@@ -181,6 +202,9 @@ function getHeroByRace(race){
 				}
 			}
 			results.push(JSON.stringify(superheroInfo[i]));
+			if(numOfResults > 0 && results.length >= numOfResults){
+				break;
+			}
 		}
 	}
 	return results;
@@ -197,6 +221,9 @@ function getHeroByPublisher(publisher){
 				}
 			}
 			results.push(JSON.stringify(superheroInfo[i]));
+			if(numOfResults > 0 && results.length >= numOfResults){
+				break;
+			}
 		}
 	}
 	return results;
@@ -210,7 +237,13 @@ function getHeroByPower(powerSearch){
 			if(power.includes(powerSearch) && superheroPowers[i][power] == "True"){
 				heroResult = getHeroByName(superheroPowers[i]["hero_names"])[0];
 				results.push(heroResult)
+				if(numOfResults > 0 && results.length >= numOfResults){
+					break;
+				}
 			}
+		}
+		if(numOfResults > 0 && results.length >= numOfResults){
+			break;
 		}
 	}
 	return results;
@@ -230,4 +263,14 @@ function getHeroByID(id){
 		}
 	}
 	return results;
+}
+
+function inputSanitization(input){
+	if(/^[\u00BF-\u1FFF\u2C00-\uD7FF\w]+$/.test(input)){
+		console.log("pass test")
+		return true;
+	} else {
+		console.log("fail test")
+		return false;
+	}
 }

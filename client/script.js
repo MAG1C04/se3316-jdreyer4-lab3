@@ -1,14 +1,18 @@
 let search = document.getElementById("superHeroSearchBar");
+let numOfResults = document.getElementById("numOfResults");
 
 let searchName = document.getElementById("searchName");
 let searchRace = document.getElementById("searchRace");
 let searchPublisher = document.getElementById("searchPublisher");
 let searchPower = document.getElementById("searchPower");
+let errorMessage = document.getElementById("errorMessage");
+let enterNumOfResultsBtn = document.getElementById("enterNumOfResults");
 
 searchName.addEventListener('click', searchByName);
 searchRace.addEventListener('click', searchByRace);
 searchPublisher.addEventListener('click', searchByPublisher);
 searchPower.addEventListener('click', searchByPower);
+enterNumOfResultsBtn.addEventListener('click', enterNumOfResults);
 
 let listSearchBar = document.getElementById("listSearchBar");
 
@@ -29,12 +33,13 @@ let sortName = document.getElementById("sortByName");
 let sortRace = document.getElementById("sortByRace");
 let sortPublisher = document.getElementById("sortByPublisher");
 let sortPower = document.getElementById("sortByPower");
+let displayPublishersBtn = document.getElementById("displayPublishersBtn");
 
 sortName.addEventListener('click', sortByName);
 sortRace.addEventListener('click', sortByRace);
 sortPublisher.addEventListener('click', sortByPublisher);
 sortPower.addEventListener('click', sortByPower);
-
+displayPublishersBtn.addEventListener('click', displayPublishers);
 
 let selected = []
 let lastResults = []
@@ -45,10 +50,15 @@ function searchByName(){
     fetch(`/api/getSuperheroByName/${search.value}`)
     .then(res => res.json()
     .then(data => {
-        //data = JSON.parse(data)
-        console.log(data)
-        lastResults = data
-        generateResults(lastResults)
+        if(res.status != 200){
+            console.log(res.status)
+            errorMessage.textContent = "Error: Please provide valid input"
+        }
+        else {
+            console.log(data)
+            lastResults = data
+            generateResults(lastResults)
+        }
     }))
 }
 
@@ -58,10 +68,16 @@ function searchByRace(){
     fetch(`/api/getSuperheroByRace/${search.value}`)
     .then(res => res.json()
     .then(data => {
-        //data = JSON.parse(data)
-        console.log(data)
-        lastResults = data
-        generateResults(lastResults)
+        if(res.status != 200){
+            console.log(res.status)
+            errorMessage.textContent = "Error: Please provide valid input"
+        }
+        else {
+            console.log("In Else: " + res.status)
+            console.log(data)
+            lastResults = data
+            generateResults(lastResults)
+        }
     }))
 }
 
@@ -71,10 +87,13 @@ function searchByPublisher(){
     fetch(`/api/getSuperheroByPublisher/${search.value}`)
     .then(res => res.json()
     .then(data => {
-        //data = JSON.parse(data)
-        console.log(data)
-        lastResults = data
-        generateResults(lastResults)
+        if(res.status != 200)
+            errorMessage.textContent = "Error: Please provide valid input"
+        else {
+            console.log(data)
+            lastResults = data
+            generateResults(lastResults)
+        }
     }))
 }
 
@@ -84,11 +103,21 @@ function searchByPower(){
     fetch(`/api/getSuperheroByPower/${search.value}`)
     .then(res => res.json()
     .then(data => {
-        //data = JSON.parse(data)
-        console.log(data)
-        lastResults = data
-        generateResults(lastResults)
+        if(res.status != 200)
+            errorMessage.textContent = "Error: Please provide valid input"
+        else {
+            console.log(data)
+            lastResults = data
+            generateResults(lastResults)
+        }
     }))
+}
+
+function enterNumOfResults(){
+    fetch(`/api/numOfResults/${numOfResults.value}`, {
+        method: 'POST',
+        headers: {'Content-type': 'application/json'},
+    })
 }
 
 function addSelected(e){
@@ -112,10 +141,20 @@ function search_list(){
     fetch(`/api/list/${listSearchBar.value}`)
     .then(res => res.json()
     .then(data => {
+        if(res.status == 404)
+            errorMessage.textContent = "Error: List Not Found"
+        else if (res.status == 400)
+            errorMessage.textContent = "Error: Please Use Only Valid Characters"
+        clearResults()
         for(let i=0; i<data.length; i++){
             fetch(`/api/getSuperheroByID/${data[i]}`)
             .then(res => res.json()
             .then(heroInfo => {
+                if(res.status == 404)
+                    errorMessage.textContent = "Error: List Not Found"
+                else if (res.status == 400)
+                    errorMessage.textContent = "Error: Please Use Only Valid Characters"
+                else{
                 let hero = heroInfo
                 let result = document.createElement("li");
                 result.className = "searchResult";
@@ -193,6 +232,7 @@ function search_list(){
                 result.appendChild(attributes)
 
                 resultsSection.appendChild(result);
+                }
             }));
         }
     }))
@@ -204,7 +244,13 @@ function edit_list(){
         headers: {'Content-type': 'application/json'},
         body: JSON.stringify(selected)
     })
-    .then(res => console.log(res.status + " " + res.body))
+    .then(res => {
+        console.log(res.status + " " + res.body)
+        if(res.status == 404)
+            errorMessage.textContent = "Error: List Not Found"
+        else if (res.status == 400)
+            errorMessage.textContent = "Error: Please Use Only Valid Characters"
+    })
 }
 
 function delete_list(){
@@ -213,7 +259,13 @@ function delete_list(){
         headers: {'Content-type': 'application/json'},
         body: JSON.stringify(selected)
     })
-    .then(res => console.log(res.status + " " + res.body))
+    .then(res => {
+        console.log(res.status + " " + res.body)
+        if(res.status == 404)
+            errorMessage.textContent = "Error: List Not Found"
+        else if (res.status == 400)
+            errorMessage.textContent = "Error: Please Use Only Valid Characters"
+    })
 }
 
 function create_list(){
@@ -222,8 +274,34 @@ function create_list(){
         headers: {'Content-type': 'application/json'},
         body: JSON.stringify(selected)
     })
-    .then(res => console.log(res.status + " " + res.body))
+    .then(res => {
+        console.log(res.status + " " + res.body)
+        if(res.status == 300)
+            errorMessage.textContent = "Error: List Already Created"
+        else if (res.status == 400)
+            errorMessage.textContent = "Error: Please Use Only Valid Characters"
+    })
+    .catch(res => console.log(res.status + " " + res.body))
+}
+function displayPublishers(){
+    fetch('/api/publishers')
+    .then(res => res.json()
+    .then(data => {
+        clearResults()
 
+        let temp = document.createElement("li");
+        temp.className = "Descriptor";
+        temp.textContent = "Publishers:";
+        resultsSection.appendChild(temp);
+
+        let publishers = data
+        for(let i=0; i<publishers.list.length; i++){
+            let category = document.createElement("li");
+            category.className = "category";
+            category.textContent = publishers.list[i];
+            resultsSection.appendChild(category);
+        }
+    }))
 }
 
 function sortByName(){
