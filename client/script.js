@@ -47,7 +47,7 @@ let lastResults = []
 function searchByName(){
     clearResults()
     console.log("Searching for Name")
-    fetch(`/api/getSuperheroByName/${search.value}`)
+    fetch(`/se3316-jdreyer4-lab3/api/getSuperheroByName/${search.value}`)
     .then(res => res.json()
     .then(data => {
         if(res.status != 200){
