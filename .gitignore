@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+superhero_info.json
+superhero_powers.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
